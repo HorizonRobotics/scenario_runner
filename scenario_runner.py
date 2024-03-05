@@ -216,7 +216,26 @@ class ScenarioRunner(object):
                                                                              vehicle.rolename,
                                                                              random_location=vehicle.random_location,
                                                                              color=vehicle.color,
-                                                                             actor_category=vehicle.category))
+                                                                             actor_category=vehicle.category,
+                                                                             autopilot=True))
+                # To attach cameras to actor, first get the blueprint library
+                # world = CarlaDataProvider._world
+                blueprint_library = self.world.get_blueprint_library()
+                # Find the blueprint for the camera sensor.
+                camera_bp = blueprint_library.find('sensor.camera.rgb')
+                # Set up the camera parameters
+                camera_bp.set_attribute('image_size_x', '800')
+                camera_bp.set_attribute('image_size_y', '600')
+                camera_bp.set_attribute('fov', '90')
+                camera_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
+                # Spawn the camera sensor and attach it to actor.
+                self.front_camera = self.world.spawn_actor(camera_bp, camera_transform, attach_to=self.ego_vehicles[0])
+                print("front camera: ", self.front_camera)
+                # Start listening to the camera sensor
+                self.front_camera.listen(lambda image: self.save_image_to_disk(image))
+
+                # assign the actor to ego
+                self.ego_vehicles.append(self.ego_vehicles[0])
         else:
             ego_vehicle_missing = True
             while ego_vehicle_missing:
@@ -246,6 +265,10 @@ class ScenarioRunner(object):
             self.world.tick()
         else:
             self.world.wait_for_tick()
+    
+    # Function to save images from the camera sensor
+    def save_image_to_disk(self, image):
+        image.save_to_disk('/mnt/nas37/wenxin.shao/workspace/hoplan/temp/carla_code/route_camera/%s/%06d.jpg' % (self.scenario_name, image.frame))
 
     def _analyze_scenario(self, config):
         """
