@@ -1734,7 +1734,7 @@ class BackgroundBehavior(AtomicBehavior):
         """Computes the parameters that are dependent on the speed of the ego. """
         ego_speed = CarlaDataProvider.get_velocity(self._ego_actor)
         self._min_radius = self._base_min_radius + self._radius_increase_ratio * ego_speed + self._road_extra_space
-        self._max_radius = self._base_max_radius + self._radius_increase_ratio * ego_speed + self._road_extra_space
+        self._max_radius = self._base_max_radius + self._radius_increase_ratio * ego_speed * 3 + self._road_extra_space
         self._detection_dist = self._base_junction_detection + self._detection_ratio * ego_speed
 
     def _stop_road_front_vehicles(self):
@@ -2244,7 +2244,7 @@ class BackgroundBehavior(AtomicBehavior):
         if not self._is_location_behind_ego(location):
             percentage = (self._max_radius - distance) / (self._max_radius - self._min_radius) * 100
             percentage *= multiplier
-            percentage = max(min(percentage, 100), 0)
+            percentage = max(min(percentage, 100), 50)
         elif not self._scenario_junction_entry:
             percentage = distance / (self._max_radius - self._min_radius) * 100 + 100
             percentage = max(min(percentage, 200), 0)
