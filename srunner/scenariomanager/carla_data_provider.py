@@ -70,6 +70,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
     _grp = None
     _runtime_init_flag = False
     _lock = threading.Lock()
+    _light = carla.VehicleLightState.Position | carla.VehicleLightState.LowBeam
 
     @staticmethod
     def set_local_planner(plan):
@@ -235,6 +236,16 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         return CarlaDataProvider._world
 
     @staticmethod
+    def is_night():
+        weather = CarlaDataProvider._world.get_weather()
+        return weather.sun_altitude_angle < 0.0
+
+    @staticmethod
+    def control_light(actor):
+        if CarlaDataProvider.is_night():
+            actor.set_light_state(carla.VehicleLightState(CarlaDataProvider._light))
+
+    @staticmethod
     def get_map(world=None):
         """
         Get the current map
@@ -249,6 +260,13 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 CarlaDataProvider._map = world.get_map()
 
         return CarlaDataProvider._map
+
+    @staticmethod
+    def set_random_seed(seed):
+        """
+        @return the random seed.
+        """
+        CarlaDataProvider._rng = random.RandomState(seed)
 
     @staticmethod
     def get_random_seed():
@@ -730,6 +748,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
 
         CarlaDataProvider._carla_actor_pool[actor.id] = actor
         CarlaDataProvider.register_actor(actor, spawn_point)
+        CarlaDataProvider.control_light(actor)
         return actor
 
     @staticmethod
@@ -811,6 +830,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 continue
             CarlaDataProvider._carla_actor_pool[actor.id] = actor
             CarlaDataProvider.register_actor(actor, _spawn_point)
+            CarlaDataProvider.control_light(actor)
 
         return actors
 
@@ -864,6 +884,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 continue
             CarlaDataProvider._carla_actor_pool[actor.id] = actor
             CarlaDataProvider.register_actor(actor, spawn_point)
+            CarlaDataProvider.control_light(actor)
 
         return actors
 
@@ -992,7 +1013,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         CarlaDataProvider._client = None
         CarlaDataProvider._spawn_points = None
         CarlaDataProvider._spawn_index = 0
-        CarlaDataProvider._rng = random.RandomState(CarlaDataProvider._random_seed)
+        # CarlaDataProvider._rng = random.RandomState(CarlaDataProvider._random_seed)
         CarlaDataProvider._grp = None
         CarlaDataProvider._runtime_init_flag = False
 

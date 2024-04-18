@@ -10,6 +10,8 @@ Scenario spawning elements to make the town dynamic and interesting
 
 from collections import OrderedDict
 import py_trees
+import os
+import random
 
 import carla
 
@@ -18,6 +20,9 @@ from agents.navigation.local_planner import RoadOption
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import AtomicBehavior
 from srunner.tools.scenario_helper import get_same_dir_lanes, get_opposite_dir_lanes
+
+
+DATAGEN = int(os.environ.get('DATAGEN', '0'))
 
 JUNCTION_ENTRY = 'entry'
 JUNCTION_MIDDLE = 'middle'
@@ -2121,6 +2126,8 @@ class BackgroundBehavior(AtomicBehavior):
         ego_location = CarlaDataProvider.get_location(self._ego_actor)
         if ego_location.distance(spawn_wp.transform.location) < ego_dist:
             return None
+        if DATAGEN == 1 and random.random() < 0.1:
+            return None
 
         spawn_transform = carla.Transform(
             spawn_wp.transform.location + carla.Location(z=self._spawn_vertical_shift),
@@ -2143,6 +2150,8 @@ class BackgroundBehavior(AtomicBehavior):
         ego_location = CarlaDataProvider.get_location(self._ego_actor)
         for wp in spawn_wps:
             if ego_location.distance(wp.transform.location) < ego_dist:
+                continue
+            if DATAGEN == 1 and random.random() < 0.1:
                 continue
             spawn_transforms.append(
                 carla.Transform(wp.transform.location + carla.Location(z=self._spawn_vertical_shift),
