@@ -19,6 +19,7 @@ import math
 import numpy as np
 import py_trees
 import shapely.geometry
+import os
 
 import carla
 from agents.tools.misc import get_speed
@@ -1520,7 +1521,8 @@ class RouteCompletionTest(Criterion):
     - route: Route to be checked
     - terminate_on_failure [optional]: If True, the complete scenario will terminate upon failure of this test
     """
-    WINDOWS_SIZE = 2
+    frame_rate = int(float(os.environ.get('FRAME_RATE', '20.0')))
+    WINDOWS_SIZE = 2 if frame_rate == 20 else 5
 
     # Thresholds to return that a route has been completed
     DISTANCE_THRESHOLD = 10.0  # meters
