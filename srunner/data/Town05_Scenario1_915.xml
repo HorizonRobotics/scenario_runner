@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<routes>
+  <!--scenario 1-->
+  <route id="0" town="Town05">
+    <waypoints>
+      <position x="-204.103836" y="84.333168" z="0.0" pitch="0.0" roll="0.0" yaw="-179.934433"/>
+      <position x="-265.203125" y="47.777473" z="0.0" pitch="0.0" roll="0.0" yaw="-90.583755"/>
+    </waypoints>
+    <scenarios>
+    </scenarios>
+  </route>
+  <!--scenario 7-->
+  <route id="1" town="Town05">
+    <waypoints>
+      <position x="-170.377899" y="-133.348587" z="0.0" pitch="0.0" roll="0.0" yaw="335.317719"/>
+      <position x="-80.568474" y="-133.656876" z="0.0" pitch="0.0" roll="0.0" yaw="16.093081"/>
+    </waypoints>
+    <scenarios>
+    </scenarios>
+  </route>
+  <!--scenario 10-->
+  <route id="2" town="Town05">
+    <waypoints>
+      <position x="-275.484009" y="-41.257988" z="0.0" pitch="0.0" roll="0.0" yaw="90.416786"/>
+      <position x="-275.741760" y="44.039116" z="0.0" pitch="0.0" roll="0.0" yaw="89.416245"/>
+    </waypoints>
+    <scenarios>
+    </scenarios>
+  </route>
+</routes>
